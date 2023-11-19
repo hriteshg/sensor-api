@@ -1,0 +1,1 @@
+drop table fish_data;

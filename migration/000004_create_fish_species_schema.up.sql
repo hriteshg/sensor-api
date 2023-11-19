@@ -1,0 +1,8 @@
+CREATE TABLE fish_species
+(
+    id BIGSERIAL PRIMARY KEY,
+    species_name TEXT UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
+);
