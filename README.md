@@ -1,15 +1,15 @@
-**Sensor API**
+## Sensor API
 
 This repository is backend implementation of Sensor API which collects Sensor data and calculates various aggregation statistics. 
 The API is built using the Go language and the Gin framework.
 
-**Features**
+## Features
 
 * Captures Sensor group and Sensors information
 * Collects data from sensors
 * Performs aggregations on sensor data
 
-**Tech Stack**
+## Tech Stack
 
 * GoLang
 * PostgresSQL for data storage
@@ -17,24 +17,24 @@ The API is built using the Go language and the Gin framework.
 * Swagger API documentation
 * Redis
 
-**Prerequisites**
+## Prerequisites
 
 Ensure the below are installed:
 - [Go](https://golang.org/dl/)
 - [Docker](https://www.docker.com/get-started)
 
-**Local Setup:**
+## Local Setup
 
-1. **Clone the repository:**
+1. Clone the repository:
 
     ```bash
     git clone https://github.com/hriteshg/sensor-api.git
     cd sensor-api
     ```
 
-2. **Rename `env.example` to  `.env` file in the project root and configure the data**
+2. Rename `env.example` to  `.env` file in the project root and configure the data
 
-**Running the API**
+## Run the Service
 
 Use docker and run the current Go application using below command:
 
@@ -44,12 +44,26 @@ Use docker and run the current Go application using below command:
 Alternatively, you can also run the Go run separately using below commands:
 
     ```bash
-    docker-compose up
-    go run ./cmd/api/main.go
+         docker-compose up
+         go run ./cmd/api/main.go
     ```
 The API will be available at http://localhost:3333
 
 
-**Swagger Documentation**
+## Run the Generators
+
+There are 3 generators available.
+* **Sensors Generator** - To seed sensor group and sensors data (**sensor_data_generator.go**)
+* **Sensor Data Generator** - To seed sensor data based on sensor's data output rate (**sensor_data_generator.go**)
+* **Aggregate Statistics Generator** = To fetch required statistics (**aggregate_statistics_generator.go**)
+    
+To run the required generator, use below command:
+
+    ```bash
+         docker-compose up
+         go run ./cmd/generators/<generatorName>.go
+    ```
+
+## Swagger Documentation
 
 Swagger documentation is available at http://localhost:3333/swagger/index.html
