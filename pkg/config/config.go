@@ -17,6 +17,7 @@ type Config struct {
 	DBPassword    string `envconfig:"DB_PASSWORD"`
 	DBName        string `envconfig:"DB_NAME"`
 	DBPort        string `envconfig:"DB_PORT"`
+	RedisUrl      string `envconfig:"REDIS_URL"`
 }
 
 func Init() Config {

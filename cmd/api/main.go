@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"sensor-api/pkg/api"
+	"sensor-api/pkg/cache"
 	"sensor-api/pkg/config"
 	"sensor-api/pkg/db"
 )
@@ -22,7 +23,8 @@ func main() {
 		log.Fatalf("Error running schema migration %v", err)
 	}
 
-	server := api.NewRouter(sensorsDB)
+	redisCache := cache.NewRedisCache(c.RedisUrl)
+	server := api.NewRouter(sensorsDB, redisCache)
 	log.Println(fmt.Sprintf("Listing for requests at http://localhost:%s/", c.PORT))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", c.PORT), server))
 }

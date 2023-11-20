@@ -6,22 +6,23 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 	"net/http"
+	"sensor-api/pkg/cache"
 
 	_ "sensor-api/docs"
 )
 
-func NewRouter(db *gorm.DB) *gin.Engine {
+func NewRouter(db *gorm.DB, cache cache.RedisCache) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	rtr := gin.New()
 	rtr.Use(gin.Recovery())
 	rtr.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	rtr.GET("/health", checkHealth)
-	addRoutes(rtr, db)
+	addRoutes(rtr, db, cache)
 	return rtr
 }
 
-func addRoutes(rtr *gin.Engine, db *gorm.DB) {
-	sensorGroupHandler := NewSensorGroupHandler(db)
+func addRoutes(rtr *gin.Engine, db *gorm.DB, cache cache.RedisCache) {
+	sensorGroupHandler := NewSensorGroupHandler(db, cache)
 	sensorHandler := NewSensorHandler(db)
 	regionHandler := NewRegionHandler(db)
 
