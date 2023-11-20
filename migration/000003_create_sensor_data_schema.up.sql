@@ -3,7 +3,7 @@ CREATE TABLE sensors_data
     id BIGSERIAL PRIMARY KEY,
     temperature DOUBLE PRECISION NOT NULL,
     transparency BIGINT NOT NULL,
-    data_output_rate BIGINT,
+    sensor_id BIGINT REFERENCES sensors(id),
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ

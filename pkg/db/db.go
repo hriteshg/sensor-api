@@ -9,6 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	gormPostgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type DatabaseConfig struct {
@@ -22,7 +23,9 @@ type DatabaseConfig struct {
 func OpenConn(config DatabaseConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", config.Host, config.Port, config.Username, config.Name, config.Password)
 	log.Infof("Establishing connection to database: %s", dsn)
-	gormDB, err := gorm.Open(gormPostgres.Open(dsn), &gorm.Config{})
+	gormDB, err := gorm.Open(gormPostgres.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -24,7 +24,7 @@ func main() {
 		log.Fatalf("Error running schema migration %v", err)
 	}
 
-	server := api.NewRouter()
+	server := api.NewRouter(sensorsDB)
 	log.Println(fmt.Sprintf("Listing for requests at http://localhost:%s/", c.PORT))
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", c.PORT), server))
 }

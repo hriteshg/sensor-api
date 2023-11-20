@@ -25,14 +25,14 @@ services:
       timeout: 3s
       retries: 5
 
-  api:
-    build:
-      context: ./
-      target: app
-      args:
-        SERVICE_NAME: api
-    depends_on:
-      postgres:
-        condition: service_healthy
-    env_file:
-      - .env
+#  api:
+#    build:
+#      context: ./
+#      target: app
+#      args:
+#        SERVICE_NAME: api
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    env_file:
+#      - .env
