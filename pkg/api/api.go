@@ -2,20 +2,25 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"gorm.io/gorm"
 	"net/http"
+
+	_ "sensor-api/docs"
 )
 
 func NewRouter(db *gorm.DB) *gin.Engine {
 	gin.SetMode(gin.ReleaseMode)
 	rtr := gin.New()
 	rtr.Use(gin.Recovery())
+	rtr.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	rtr.GET("/health", checkHealth)
-	addNudgeRoutes(rtr, db)
+	addRoutes(rtr, db)
 	return rtr
 }
 
-func addNudgeRoutes(rtr *gin.Engine, db *gorm.DB) {
+func addRoutes(rtr *gin.Engine, db *gorm.DB) {
 	sensorGroupHandler := NewSensorGroupHandler(db)
 	sensorHandler := NewSensorHandler(db)
 	regionHandler := NewRegionHandler(db)
