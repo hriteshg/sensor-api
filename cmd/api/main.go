@@ -16,9 +16,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error connecting to DB %v", err)
 	}
-	if err != nil {
-		log.Fatalf("Error connecting to DB %v", err)
-	}
+
 	err = db.RunMigrations(sensorsDB, dbConfig, c.MigrationPath)
 	if err != nil {
 		log.Fatalf("Error running schema migration %v", err)

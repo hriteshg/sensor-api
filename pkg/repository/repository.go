@@ -49,10 +49,9 @@ func (r SensorRepository) GetSpeciesCountsForGroup(groupName string, topN *int, 
 		Joins("JOIN sensors ON sensor_groups.id = sensors.group_id").
 		Joins("JOIN sensors_data ON sensors.id = sensors_data.sensor_id").
 		Joins("JOIN fish_data ON sensors_data.id = fish_data.sensor_data_id").
-		Joins("JOIN fish_species ON fish_data.species_id = fish_species.id").
 		Where("sensor_groups.name = ?", groupName).
-		Select("fish_species.species_name as name, fish_data.count as count, fish_data.created_at as created_at").
-		Where("(fish_data.species_id, fish_data.created_at) IN (SELECT fd.species_id, MAX(fd.created_at) FROM fish_data fd GROUP BY fd.species_id)").
+		Select("fish_data.species_name as name, fish_data.count as count, fish_data.created_at as created_at").
+		Where("(fish_data.species_name, fish_data.created_at) IN (SELECT fd.species_name, MAX(fd.created_at) FROM fish_data fd GROUP BY fd.species_name)").
 		Scan(&speciesLatestCounts)
 
 	var filteredSpecies []model.SpeciesCount
