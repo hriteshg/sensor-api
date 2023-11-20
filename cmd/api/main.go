@@ -10,6 +10,11 @@ import (
 	"sensor-api/pkg/db"
 )
 
+// @title Sensor API
+// @version 1.0
+// @description Sensor API to maintain sensor data and generate aggregate statistics.
+// @host localhost:333
+// @BasePath /api/v1
 func main() {
 	c := config.Init()
 	dbConfig := c.DBConfig()

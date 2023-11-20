@@ -34,6 +34,14 @@ func NewSensorGroupHandler(db *gorm.DB, cache cache.RedisCache) SensorGroupHandl
 	}
 }
 
+// QueryAverageTransparency is a handler that retrieves average transparency of sensors within a sensor group.
+// @Summary Collect average transparency of sensors within a sensor group
+// @Description Collect average transparency
+// @ID query-average-transparency
+// @Param groupName path string true "Group name"
+// @Produce json
+// @Success 200
+// @Router /group/:groupName/transparency [get]
 func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 	groupName := c.Param("groupName")
 
@@ -62,6 +70,14 @@ func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, r)
 }
 
+// QueryAverageTemperature is a handler that retrieves average temperature of sensors within a sensor group.
+// @Summary Collect average temperature of sensors within a sensor group
+// @Description Collect average temperature
+// @ID query-average-temperature
+// @Param groupName path string true "Group name"
+// @Produce json
+// @Success 200
+// @Router /group/:groupName/temperature [get]
 func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
 	groupName := c.Param("groupName")
 	fromCache, err := h.getFromCache(c, groupName)
@@ -91,6 +107,14 @@ func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, r)
 }
 
+// QuerySpecies is a handler that retrieves full list of species with counts currently detected inside the group.
+// @Summary Retrieve full list of species inside the group
+// @Description Retrieves full list of species with counts currently detected inside the group.
+// @ID query-species
+// @Param groupName path string true "Group name"
+// @Produce json
+// @Success 200
+// @Router /group/:groupName/species [get]
 func (h SensorGroupHandler) QuerySpecies(c *gin.Context) {
 	groupName := c.Param("groupName")
 	r, err := h.getSpeciesCountsForGroup(groupName, nil, nil, nil)
@@ -101,6 +125,17 @@ func (h SensorGroupHandler) QuerySpecies(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, r)
 }
 
+// QueryTopNSpecies is a handler that retrieves list of top N species with counts currently detected inside the group.
+// @Summary Retrieve list of top N species inside the group
+// @Description Retrieves list of top N species with counts currently detected inside the group.
+// @ID query-species-with-filter
+// @Param groupName path string true "Group name"
+// @Param N path int true "Top N species count"
+// @Param from query int64 false "From time in Unix timestamp"
+// @Param till query int64 false "Till time in Unix timestamp"
+// @Produce json
+// @Success 200
+// @Router /group/:groupName/species/top/:N [get]
 func (h SensorGroupHandler) QueryTopNSpecies(c *gin.Context) {
 	groupName := c.Param("groupName")
 	topN, _ := strconv.Atoi(c.Param("N"))

@@ -15,6 +15,25 @@ type SensorHandler struct {
 	getSensorByCodeName            func(codeName string) (model.Sensor, error)
 }
 
+func NewSensorHandler(db *gorm.DB) SensorHandler {
+	sensorRepository := repository.NewSensorRepository(db)
+	s := repository.NewSensorRepositoryOne(db)
+	return SensorHandler{
+		getSensorByCodeName:            s.GetSensorByCodeName,
+		getAverageTemperatureForSensor: sensorRepository.GetAverageTemperatureForSensor,
+	}
+}
+
+// QueryAverageTemperature is a handler that calculates average temperature in a given time interval by a sensor.
+// @Summary Calculates average temperature
+// @Description Calculate average temperature in a given time interval by a sensor
+// @ID calculate-average-temperature-by-sensor
+// @Produce json
+// @Success 200
+// @Param from query int64 true "From time in Unix timestamp"
+// @Param till query int64 true "Till time in Unix timestamp"
+// @Param codeName path string  true "Code name of the sensor"
+// @Router /sensor/:codeName/temperature/average [get]
 func (h SensorHandler) QueryAverageTemperature(c *gin.Context) {
 	codeName := c.Param("codeName")
 	from, err := helpers.GetTime(c, "from", nil)
@@ -41,13 +60,4 @@ func (h SensorHandler) QueryAverageTemperature(c *gin.Context) {
 		Value: r,
 		Scale: "Celsius",
 	})
-}
-
-func NewSensorHandler(db *gorm.DB) SensorHandler {
-	sensorRepository := repository.NewSensorRepository(db)
-	s := repository.NewSensorRepositoryOne(db)
-	return SensorHandler{
-		getSensorByCodeName:            s.GetSensorByCodeName,
-		getAverageTemperatureForSensor: sensorRepository.GetAverageTemperatureForSensor,
-	}
 }

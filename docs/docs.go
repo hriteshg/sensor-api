@@ -14,17 +14,289 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/group/:groupName/species": {
+            "get": {
+                "description": "Retrieves full list of species with counts currently detected inside the group.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Retrieve full list of species inside the group",
+                "operationId": "query-species",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Group name",
+                        "name": "groupName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/group/:groupName/species/top/:N": {
+            "get": {
+                "description": "Retrieves list of top N species with counts currently detected inside the group.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Retrieve list of top N species inside the group",
+                "operationId": "query-species-with-filter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Group name",
+                        "name": "groupName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Top N species count",
+                        "name": "N",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "From time in Unix timestamp",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Till time in Unix timestamp",
+                        "name": "till",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/group/:groupName/temperature": {
+            "get": {
+                "description": "Collect average temperature",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Collect average temperature of sensors within a sensor group",
+                "operationId": "query-average-temperature",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Group name",
+                        "name": "groupName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/group/:groupName/transparency": {
+            "get": {
+                "description": "Collect average transparency",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Collect average transparency of sensors within a sensor group",
+                "operationId": "query-average-transparency",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Group name",
+                        "name": "groupName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/region/temperature/max": {
+            "get": {
+                "description": "Calculate maximum temperature inside a region",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Calculate maximum temperature",
+                "operationId": "calculate-max-temperature",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Minimum x",
+                        "name": "xMin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum x",
+                        "name": "xMax",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum y",
+                        "name": "yMin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum y",
+                        "name": "yMax",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum z",
+                        "name": "zMin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum z",
+                        "name": "zMax",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/region/temperature/min": {
+            "get": {
+                "description": "Calculate minimum temperature inside a region",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Calculate minimum temperature",
+                "operationId": "calculate-min-temperature",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Minimum x",
+                        "name": "xMin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum x",
+                        "name": "xMax",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum y",
+                        "name": "yMin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum y",
+                        "name": "yMax",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Minimum z",
+                        "name": "zMin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Maximum z",
+                        "name": "zMax",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/sensor/:codeName/temperature/average": {
+            "get": {
+                "description": "Calculate average temperature in a given time interval by a sensor",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Calculates average temperature",
+                "operationId": "calculate-average-temperature-by-sensor",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "From time in Unix timestamp",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Till time in Unix timestamp",
+                        "name": "till",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Code name of the sensor",
+                        "name": "codeName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
-	Host:             "",
-	BasePath:         "",
+	Version:          "1.0",
+	Host:             "localhost:333",
+	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "Sensor API",
+	Description:      "Sensor API to maintain sensor data and generate aggregate statistics.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

@@ -14,6 +14,19 @@ type RegionHandler struct {
 	getMaximumTemperatureForRegion func(xMin float64, xMax float64, yMin float64, yMax float64, zMin float64, zMax float64) (float64, error)
 }
 
+// QueryMinTemperature is a handler that calculates minimum temperature in a given region.
+// @Summary Calculate minimum temperature
+// @Description Calculate minimum temperature inside a region
+// @ID calculate-min-temperature
+// @Success 200
+// @Produce json
+// @Param xMin query float64 true "Minimum x"
+// @Param xMax query float64 true "Maximum x"
+// @Param yMin query float64 true "Minimum y"
+// @Param yMax query float64 true "Maximum y"
+// @Param zMin query float64 true "Minimum z"
+// @Param zMax query float64 true "Maximum z"
+// @Router /region/temperature/min [get]
 func (h RegionHandler) QueryMinTemperature(c *gin.Context) {
 	xMin, err := helpers.GetFloatQueryParam(c, "xMin")
 	if err != nil {
@@ -56,6 +69,19 @@ func (h RegionHandler) QueryMinTemperature(c *gin.Context) {
 	})
 }
 
+// QueryMaxTemperature is a handler that calculates maximum temperature in a given region.
+// @Summary Calculate maximum temperature
+// @Description Calculate maximum temperature inside a region
+// @ID calculate-max-temperature
+// @Success 200
+// @Produce json
+// @Param xMin query float64 true "Minimum x"
+// @Param xMax query float64 true "Maximum x"
+// @Param yMin query float64 true "Minimum y"
+// @Param yMax query float64 true "Maximum y"
+// @Param zMin query float64 true "Minimum z"
+// @Param zMax query float64 true "Maximum z"
+// @Router /region/temperature/max [get]
 func (h RegionHandler) QueryMaxTemperature(c *gin.Context) {
 	xMin, err := helpers.GetFloatQueryParam(c, "xMin")
 	if err != nil {

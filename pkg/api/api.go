@@ -26,13 +26,16 @@ func addRoutes(rtr *gin.Engine, db *gorm.DB, cache cache.RedisCache) {
 	sensorHandler := NewSensorHandler(db)
 	regionHandler := NewRegionHandler(db)
 
-	rtr.GET("/api/group/:groupName/transparency/average", sensorGroupHandler.QueryAverageTransparency)
-	rtr.GET("/api/group/:groupName/temperature/average", sensorGroupHandler.QueryAverageTemperature)
-	rtr.GET("/api/group/:groupName/species", sensorGroupHandler.QuerySpecies)
-	rtr.GET("/api/group/:groupName/species/top/:N", sensorGroupHandler.QueryTopNSpecies)
-	rtr.GET("/api/region/temperature/min", regionHandler.QueryMinTemperature)
-	rtr.GET("/api/region/temperature/max", regionHandler.QueryMaxTemperature)
-	rtr.GET("/api/sensor/:codeName/temperature/average", sensorHandler.QueryAverageTemperature)
+	v1 := rtr.Group("/api/v1")
+	{
+		v1.GET("/group/:groupName/transparency/average", sensorGroupHandler.QueryAverageTransparency)
+		v1.GET("/group/:groupName/temperature/average", sensorGroupHandler.QueryAverageTemperature)
+		v1.GET("/group/:groupName/species", sensorGroupHandler.QuerySpecies)
+		v1.GET("/group/:groupName/species/top/:N", sensorGroupHandler.QueryTopNSpecies)
+		v1.GET("/region/temperature/min", regionHandler.QueryMinTemperature)
+		v1.GET("/region/temperature/max", regionHandler.QueryMaxTemperature)
+		v1.GET("/sensor/:codeName/temperature/average", sensorHandler.QueryAverageTemperature)
+	}
 }
 
 func checkHealth(c *gin.Context) {
