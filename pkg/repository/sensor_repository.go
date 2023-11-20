@@ -20,3 +20,10 @@ func (r SensorRepositoryOne) GetAllSensors() ([]model.Sensor, error) {
 	tx := r.db.Find(&results)
 	return results, tx.Error
 }
+
+func (r SensorRepositoryOne) GetSensorByCodeName(codeName string) (model.Sensor, error) {
+	var sensor model.Sensor
+	query := r.db.Where("name = ?", codeName).First(&sensor)
+	return sensor, query.Error
+
+}

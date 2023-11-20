@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"sensor-api/pkg/helpers"
+	"sensor-api/pkg/model"
 	"sensor-api/pkg/repository"
 )
 
@@ -49,7 +50,10 @@ func (h RegionHandler) QueryMinTemperature(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, r)
+	c.IndentedJSON(http.StatusOK, model.TemperatureResponse{
+		Value: r,
+		Scale: "Celsius",
+	})
 }
 
 func (h RegionHandler) QueryMaxTemperature(c *gin.Context) {
@@ -88,7 +92,10 @@ func (h RegionHandler) QueryMaxTemperature(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, r)
+	c.IndentedJSON(http.StatusOK, model.TemperatureResponse{
+		Value: r,
+		Scale: "Celsius",
+	})
 }
 
 func NewRegionHandler(db *gorm.DB) RegionHandler {

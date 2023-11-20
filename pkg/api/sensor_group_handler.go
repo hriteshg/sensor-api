@@ -12,14 +12,23 @@ import (
 )
 
 type SensorGroupHandler struct {
-	getGroup                    func() (model.SensorData, error)
-	getSensorAggregateForAGroup func(groupName string) (model.SensorGroupAggregate, error)
-	getSpeciesCountsForGroup    func(groupName string, topN *int, fromDateTime *time.Time, toDateTime *time.Time) ([]model.SpeciesCount, error)
+	getGroup                   func() (model.SensorData, error)
+	getSensorAggregateForGroup func(groupName string) (model.SensorGroupAggregate, error)
+	getSpeciesCountsForGroup   func(groupName string, topN *int, fromDateTime *time.Time, toDateTime *time.Time) ([]model.SpeciesCount, error)
+}
+
+func NewSensorGroupHandler(db *gorm.DB) SensorGroupHandler {
+	sensorRepository := repository.NewSensorRepository(db)
+	return SensorGroupHandler{
+		getGroup:                   sensorRepository.GetGroup,
+		getSensorAggregateForGroup: sensorRepository.GetSensorAggregateForGroup,
+		getSpeciesCountsForGroup:   sensorRepository.GetSpeciesCountsForGroup,
+	}
 }
 
 func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 	groupName := c.Param("groupName")
-	r, err := h.getSensorAggregateForAGroup(groupName)
+	r, err := h.getSensorAggregateForGroup(groupName)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
@@ -29,7 +38,7 @@ func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 
 func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
 	groupName := c.Param("groupName")
-	r, err := h.getSensorAggregateForAGroup(groupName)
+	r, err := h.getSensorAggregateForGroup(groupName)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
@@ -50,11 +59,11 @@ func (h SensorGroupHandler) QuerySpecies(c *gin.Context) {
 func (h SensorGroupHandler) QueryTopNSpecies(c *gin.Context) {
 	groupName := c.Param("groupName")
 	topN, _ := strconv.Atoi(c.Param("N"))
-	from, err := helpers.GetDate(c, "fromDateTime", nil)
+	from, err := helpers.GetTime(c, "fromDateTime", nil)
 	if err != nil {
 		return
 	}
-	to, err := helpers.GetDate(c, "untilDateTime", nil)
+	to, err := helpers.GetTime(c, "untilDateTime", nil)
 	if err != nil {
 		return
 	}
@@ -64,13 +73,4 @@ func (h SensorGroupHandler) QueryTopNSpecies(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, r)
-}
-
-func NewSensorGroupHandler(db *gorm.DB) SensorGroupHandler {
-	sensorRepository := repository.NewSensorRepository(db)
-	return SensorGroupHandler{
-		getGroup:                    sensorRepository.GetGroup,
-		getSensorAggregateForAGroup: sensorRepository.GetSensorAggregateForAGroup,
-		getSpeciesCountsForGroup:    sensorRepository.GetSpeciesCountsForGroup,
-	}
 }

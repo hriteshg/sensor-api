@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"errors"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -31,7 +32,7 @@ func (r SensorRepository) GetGroup() (model.SensorData, error) {
 	return c, result.Error
 }
 
-func (r SensorRepository) GetSensorAggregateForAGroup(groupName string) (model.SensorGroupAggregate, error) {
+func (r SensorRepository) GetSensorAggregateForGroup(groupName string) (model.SensorGroupAggregate, error) {
 	var result model.SensorGroupAggregate
 	query := r.db.Table("sensor_groups").
 		Joins("JOIN sensors ON sensor_groups.id = sensors.group_id").
@@ -82,38 +83,59 @@ func (r SensorRepository) GetSpeciesCountsForGroup(groupName string, topN *int, 
 }
 
 func (r SensorRepository) GetMinimumTemperatureForRegion(xMin float64, xMax float64, yMin float64, yMax float64, zMin float64, zMax float64) (float64, error) {
-	var minTemperature float64
+	var minTemperature sql.NullFloat64
 
 	query := r.db.Model(&model.SensorData{}).
 		Joins("INNER JOIN sensors ON sensors.id = sensors_data.sensor_id").
-		Where("sensors.x >= ? AND sensors.x <= ? AND sensors.y >= ? AND sensors.y <= ? AND sensors.z >= ? AND sensors.z <= ?",
+		Where("sensors.x_coordinate >= ? AND sensors.x_coordinate <= ? AND sensors.y_coordinate >= ? AND sensors.y_coordinate <= ? AND sensors.z_coordinate >= ? AND sensors.z_coordinate <= ?",
 			xMin, xMax, yMin, yMax, zMin, zMax).
 		Select("MIN(sensors_data.temperature)").
 		Scan(&minTemperature)
 
-	return minTemperature, query.Error
+	if query.Error != nil {
+		return 0, query.Error
+	}
+	if minTemperature.Valid {
+		return minTemperature.Float64, query.Error
+	} else {
+		return 0, nil
+	}
 }
 
 func (r SensorRepository) GetMaximumTemperatureForRegion(xMin float64, xMax float64, yMin float64, yMax float64, zMin float64, zMax float64) (float64, error) {
-	var minTemperature float64
+	var maxTemperature sql.NullFloat64
 
 	query := r.db.Model(&model.SensorData{}).
 		Joins("INNER JOIN sensors ON sensors.id = sensors_data.sensor_id").
-		Where("sensors.x >= ? AND sensors.x <= ? AND sensors.y >= ? AND sensors.y <= ? AND sensors.z >= ? AND sensors.z <= ?",
+		Where("sensors.x_coordinate >= ? AND sensors.x_coordinate <= ? AND sensors.y_coordinate >= ? AND sensors.y_coordinate <= ? AND sensors.z_coordinate >= ? AND sensors.z_coordinate <= ?",
 			xMin, xMax, yMin, yMax, zMin, zMax).
 		Select("MAX(sensors_data.temperature)").
-		Scan(&minTemperature)
+		Scan(&maxTemperature)
 
-	return minTemperature, query.Error
+	if query.Error != nil {
+		return 0, query.Error
+	}
+	if maxTemperature.Valid {
+		return maxTemperature.Float64, query.Error
+	} else {
+		return 0, nil
+	}
 }
 
 func (r SensorRepository) GetAverageTemperatureForSensor(sensorId int64, fromDate time.Time, untilDateTime time.Time) (float64, error) {
-	var averageTemperature float64
+	var averageTemperature sql.NullFloat64
 
 	query := r.db.Model(&model.SensorData{}).
 		Where("sensor_id = ? AND created_at >= ? AND created_at <= ?", sensorId, fromDate, untilDateTime).
 		Select("AVG(temperature)").
 		Scan(&averageTemperature)
 
-	return averageTemperature, query.Error
+	if query.Error != nil {
+		return 0, query.Error
+	}
+	if averageTemperature.Valid {
+		return averageTemperature.Float64, query.Error
+	} else {
+		return 0, nil
+	}
 }

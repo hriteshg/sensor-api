@@ -16,22 +16,24 @@ func GetFloatQueryParam(ctx *gin.Context, param string) (float64, error) {
 	}
 	l, err := strconv.ParseFloat(v, 64)
 	if err != nil {
-		log.Errorf("error parsing limit query param %v", err)
-		return 0, errors.New("query param: limit should be a float")
+		log.Errorf("error parsing query param %v", err)
+		return 0, errors.New("query param should be a float")
 	}
 
 	return l, err
 }
 
-func GetDate(c *gin.Context, key string, defaultVal *time.Time) (*time.Time, error) {
-	dateStr, exists := c.GetQuery(key)
-	if dateStr == "" || !exists {
+func GetTime(c *gin.Context, key string, defaultVal *time.Time) (*time.Time, error) {
+	unixTimeStr, exists := c.GetQuery(key)
+	if unixTimeStr == "" || !exists {
 		return defaultVal, nil
 	}
-	date, err := time.Parse("02/01/2006", dateStr)
+	unixTime, err := strconv.ParseInt(unixTimeStr, 10, 64)
+	log.Infof("Unix time %v", unixTime)
+	t := time.Unix(unixTime, 0)
 	if err != nil {
-		log.Errorf("error parsing %v date query param %v", key, err)
-		return nil, errors.New(fmt.Sprintf("query param: %v should be a valid date in format: DD/MM/YYYY", key))
+		log.Errorf("error parsing %v timestamp query param %v", key, err)
+		return nil, errors.New(fmt.Sprintf("query param: %v should be a valid timestamp", key))
 	}
-	return &date, nil
+	return &t, nil
 }

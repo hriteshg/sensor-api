@@ -53,13 +53,18 @@ func (FishData) TableName() string {
 }
 
 type SensorGroupAggregate struct {
-	Name                string
-	AverageTemperature  float64
-	AverageTransparency float64
+	Name                string  `json:"name"`
+	AverageTemperature  float64 `json:"average_temperature"`
+	AverageTransparency float64 `json:"average_transparency"`
 }
 
 type SpeciesCount struct {
-	Name      string
-	Count     int64
-	CreatedAt time.Time
+	Name      string    `json:"name"`
+	Count     int64     `json:"count"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type TemperatureResponse struct {
+	Value float64 `json:"value"`
+	Scale string  `json:"scale"`
 }
