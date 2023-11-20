@@ -36,26 +36,35 @@ func NewSensorHandler(db *gorm.DB) SensorHandler {
 // @Router /sensor/:codeName/temperature/average [get]
 func (h SensorHandler) QueryAverageTemperature(c *gin.Context) {
 	codeName := c.Param("codeName")
-	from, err := helpers.GetTime(c, "from", nil)
-	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	if len(codeName) == 0 {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
 		return
 	}
+
+	from, err := helpers.GetTime(c, "from", nil)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
 	to, err := helpers.GetTime(c, "till", nil)
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	sensor, err := h.getSensorByCodeName(codeName)
 	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	r, err := h.getAverageTemperatureForSensor(sensor.ID, *from, *to)
 	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
+
 	c.IndentedJSON(http.StatusOK, model.TemperatureResponse{
 		Value: r,
 		Scale: "Celsius",

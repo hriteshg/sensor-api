@@ -44,6 +44,10 @@ func NewSensorGroupHandler(db *gorm.DB, cache cache.RedisCache) SensorGroupHandl
 // @Router /group/:groupName/transparency [get]
 func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 	groupName := c.Param("groupName")
+	if len(groupName) == 0 {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+		return
+	}
 
 	fromCache, err := h.getFromCache(c, groupName)
 	if err == nil {
@@ -51,11 +55,13 @@ func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 		c.IndentedJSON(http.StatusOK, *fromCache)
 		return
 	}
+
 	r, err := h.getSensorAggregateForGroup(groupName)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
+
 	marshal, err := json.Marshal(r)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
@@ -67,6 +73,7 @@ func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
+
 	c.IndentedJSON(http.StatusOK, r)
 }
 
@@ -80,6 +87,11 @@ func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 // @Router /group/:groupName/temperature [get]
 func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
 	groupName := c.Param("groupName")
+	if len(groupName) == 0 {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+		return
+	}
+
 	fromCache, err := h.getFromCache(c, groupName)
 	if err == nil {
 		log.Infof("Fetched from cache %v", fromCache)
@@ -117,6 +129,11 @@ func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
 // @Router /group/:groupName/species [get]
 func (h SensorGroupHandler) QuerySpecies(c *gin.Context) {
 	groupName := c.Param("groupName")
+	if len(groupName) == 0 {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+		return
+	}
+
 	r, err := h.getSpeciesCountsForGroup(groupName, nil, nil, nil)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
@@ -138,15 +155,29 @@ func (h SensorGroupHandler) QuerySpecies(c *gin.Context) {
 // @Router /group/:groupName/species/top/:N [get]
 func (h SensorGroupHandler) QueryTopNSpecies(c *gin.Context) {
 	groupName := c.Param("groupName")
-	topN, _ := strconv.Atoi(c.Param("N"))
+	if len(groupName) == 0 {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+		return
+	}
+
+	topN, err := strconv.Atoi(c.Param("N"))
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid N")
+		return
+	}
+
 	from, err := helpers.GetTime(c, "fromDateTime", nil)
 	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid fromDateTime")
 		return
 	}
+
 	to, err := helpers.GetTime(c, "untilDateTime", nil)
 	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, "Invalid untilDateTime")
 		return
 	}
+
 	r, err := h.getSpeciesCountsForGroup(groupName, &topN, from, to)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})

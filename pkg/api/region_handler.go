@@ -30,32 +30,32 @@ type RegionHandler struct {
 func (h RegionHandler) QueryMinTemperature(c *gin.Context) {
 	xMin, err := helpers.GetFloatQueryParam(c, "xMin")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	xMax, err := helpers.GetFloatQueryParam(c, "xMax")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	yMin, err := helpers.GetFloatQueryParam(c, "yMin")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	yMax, err := helpers.GetFloatQueryParam(c, "yMax")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	zMin, err := helpers.GetFloatQueryParam(c, "zMin")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	zMax, err := helpers.GetFloatQueryParam(c, "zMax")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	r, err := h.getMinimumTemperatureForRegion(xMin, xMax, yMin, yMax, zMin, zMax)
@@ -85,32 +85,32 @@ func (h RegionHandler) QueryMinTemperature(c *gin.Context) {
 func (h RegionHandler) QueryMaxTemperature(c *gin.Context) {
 	xMin, err := helpers.GetFloatQueryParam(c, "xMin")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	xMax, err := helpers.GetFloatQueryParam(c, "xMax")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	yMin, err := helpers.GetFloatQueryParam(c, "yMin")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	yMax, err := helpers.GetFloatQueryParam(c, "yMax")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	zMin, err := helpers.GetFloatQueryParam(c, "zMin")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	zMax, err := helpers.GetFloatQueryParam(c, "zMax")
 	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 	r, err := h.getMaximumTemperatureForRegion(xMin, xMax, yMin, yMax, zMin, zMax)

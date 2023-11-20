@@ -67,3 +67,8 @@ To run the required generator, use below command:
 ## Swagger Documentation
 
 Swagger documentation is available at http://localhost:3333/swagger/index.html
+
+## Pending
+
+* Unit and E2E tests
+* More validations and certain refactoring 
