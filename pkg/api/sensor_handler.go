@@ -28,7 +28,7 @@ func (h SensorHandler) QueryAverageTemperature(c *gin.Context) {
 	}
 	atoi, _ := strconv.Atoi(codeName)
 
-	r, err := h.getAverageTemperatureForSensor(int64(atoi), from, to)
+	r, err := h.getAverageTemperatureForSensor(int64(atoi), *from, *to)
 	if err != nil {
 		return
 	}

@@ -58,7 +58,7 @@ func (h SensorGroupHandler) QueryTopNSpecies(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	r, err := h.getSpeciesCountsForGroup(groupName, &topN, &from, &to)
+	r, err := h.getSpeciesCountsForGroup(groupName, &topN, from, to)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return

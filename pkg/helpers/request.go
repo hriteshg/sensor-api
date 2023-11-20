@@ -23,15 +23,15 @@ func GetFloatQueryParam(ctx *gin.Context, param string) (float64, error) {
 	return l, err
 }
 
-func GetDate(c *gin.Context, key string, defaultVal *time.Time) (time.Time, error) {
+func GetDate(c *gin.Context, key string, defaultVal *time.Time) (*time.Time, error) {
 	dateStr, exists := c.GetQuery(key)
 	if dateStr == "" || !exists {
-		return *defaultVal, nil
+		return defaultVal, nil
 	}
 	date, err := time.Parse("02/01/2006", dateStr)
 	if err != nil {
 		log.Errorf("error parsing %v date query param %v", key, err)
-		return time.Time{}, errors.New(fmt.Sprintf("query param: %v should be a valid date in format: DD/MM/YYYY", key))
+		return nil, errors.New(fmt.Sprintf("query param: %v should be a valid date in format: DD/MM/YYYY", key))
 	}
-	return date, nil
+	return &date, nil
 }

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"sensor-api/pkg/model"
 	"sort"
@@ -36,7 +37,7 @@ func (r SensorRepository) GetSensorAggregateForAGroup(groupName string) (model.S
 		Joins("JOIN sensors ON sensor_groups.id = sensors.group_id").
 		Joins("JOIN sensors_data ON sensors.id = sensors_data.sensor_id").
 		Where("sensor_groups.name = ?", groupName).
-		Select("AVG(sensors_data.transparency) as avg_transparency, AVG(sensors_data.temperature) as avg_temperature").
+		Select("AVG(sensors_data.transparency) as average_transparency, AVG(sensors_data.temperature) as average_temperature").
 		Take(&result)
 	result.Name = groupName
 	return result, query.Error
@@ -55,21 +56,28 @@ func (r SensorRepository) GetSpeciesCountsForGroup(groupName string, topN *int, 
 		Scan(&speciesLatestCounts)
 
 	var filteredSpecies []model.SpeciesCount
-	for _, sp := range speciesLatestCounts {
-		if sp.CreatedAt.After(*fromDateTime) && sp.CreatedAt.Before(*toDateTime) {
-			filteredSpecies = append(filteredSpecies, sp)
+	if fromDateTime != nil && toDateTime != nil {
+		for _, sp := range speciesLatestCounts {
+			if sp.CreatedAt.After(*fromDateTime) && sp.CreatedAt.Before(*toDateTime) {
+				filteredSpecies = append(filteredSpecies, sp)
+			}
 		}
+	} else {
+		filteredSpecies = speciesLatestCounts
 	}
+
 	sort.SliceStable(filteredSpecies, func(i, j int) bool {
 		return filteredSpecies[i].Count > filteredSpecies[j].Count
 	})
 
 	var topSpeciesCounts []model.SpeciesCount
-	if len(filteredSpecies) > *topN {
+	log.Infof("topN %v", *topN)
+	if topN != nil && len(filteredSpecies) > *topN {
 		topSpeciesCounts = filteredSpecies[:*topN]
 	} else {
 		topSpeciesCounts = filteredSpecies
 	}
+	log.Infof("topSpeciesCounts %v", topSpeciesCounts)
 	return topSpeciesCounts, nil
 }
 

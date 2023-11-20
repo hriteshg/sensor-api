@@ -25,7 +25,7 @@ func (r SensorGroupRepository) CreateSensors(groupNames []string) {
 			yVal := rand.Float64() * 100
 			zVal := rand.Float64() * 100
 			sensors = append(sensors, model.Sensor{
-				Name:           fmt.Sprintf("Sensor-%s-%d", groupName, i+1),
+				Name:           fmt.Sprintf("%s %d", groupName, i+1),
 				XCoordinate:    xVal,
 				YCoordinate:    yVal,
 				ZCoordinate:    zVal,
