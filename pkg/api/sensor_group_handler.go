@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -41,9 +42,9 @@ func NewSensorGroupHandler(db *gorm.DB, cache cache.RedisCache) SensorGroupHandl
 // @Success 200
 // @Router /group/:groupName/transparency [get]
 func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
-	groupName := c.Param("groupName")
-	if len(groupName) == 0 {
-		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+	groupName, err := h.getGroupName(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -60,12 +61,7 @@ func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 		return
 	}
 
-	marshal, err := json.Marshal(r)
-	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-	err = h.setInCache(c, groupName, marshal)
+	err = h.setResponseInCache(c, groupName, r)
 	if err != nil {
 		log.Errorf("Set in cache returned error %v", err)
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
@@ -84,9 +80,9 @@ func (h SensorGroupHandler) QueryAverageTransparency(c *gin.Context) {
 // @Success 200
 // @Router /group/:groupName/temperature [get]
 func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
-	groupName := c.Param("groupName")
-	if len(groupName) == 0 {
-		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+	groupName, err := h.getGroupName(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -103,12 +99,7 @@ func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
 		return
 	}
 
-	marshal, err := json.Marshal(r)
-	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
-	err = h.setInCache(c, groupName, marshal)
+	err = h.setResponseInCache(c, groupName, r)
 	if err != nil {
 		log.Errorf("Set in cache returned error %v", err)
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
@@ -126,9 +117,9 @@ func (h SensorGroupHandler) QueryAverageTemperature(c *gin.Context) {
 // @Success 200
 // @Router /group/:groupName/species [get]
 func (h SensorGroupHandler) QuerySpecies(c *gin.Context) {
-	groupName := c.Param("groupName")
-	if len(groupName) == 0 {
-		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+	groupName, err := h.getGroupName(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -152,9 +143,9 @@ func (h SensorGroupHandler) QuerySpecies(c *gin.Context) {
 // @Success 200
 // @Router /group/:groupName/species/top/:N [get]
 func (h SensorGroupHandler) QueryTopNSpecies(c *gin.Context) {
-	groupName := c.Param("groupName")
-	if len(groupName) == 0 {
-		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+	groupName, err := h.getGroupName(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -182,4 +173,21 @@ func (h SensorGroupHandler) QueryTopNSpecies(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, r)
+}
+
+func (h SensorGroupHandler) getGroupName(c *gin.Context) (string, error) {
+	groupName := c.Param("groupName")
+	if len(groupName) == 0 {
+		return "", errors.New("invalid group name")
+	}
+	return groupName, nil
+}
+
+func (h SensorGroupHandler) setResponseInCache(c *gin.Context, groupName string, r model.SensorGroupAggregate) error {
+	marshal, err := json.Marshal(r)
+	if err != nil {
+		return err
+	}
+	err = h.setInCache(c, groupName, marshal)
+	return err
 }
