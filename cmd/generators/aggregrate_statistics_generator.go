@@ -1,12 +1,14 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
 	"sensor-api/pkg/config"
 	"sensor-api/pkg/db"
+	"sensor-api/pkg/model"
 	"sensor-api/pkg/repository"
 	"time"
 )
@@ -27,32 +29,52 @@ func main() {
 			return
 		}
 		for _, group := range groups {
-			go makeRequest(fmt.Sprintf("http://localhost:3333/api//group/%s/transparency/average", group.Name))
-			go makeRequest(fmt.Sprintf("http://localhost:3333/api//group/%s/temperature/average", group.Name))
+			go getAverageTransparency(group)
+			go getAverageTemperature(group)
 		}
-
 	}
 }
 
-func makeRequest(url string) {
+func getAverageTransparency(sensorGroup model.SensorGroup) {
+	a := makeRequest(fmt.Sprintf("http://localhost:3333/api/v1/group/%s/transparency/average", sensorGroup.Name))
+	if a == nil {
+		return
+	}
+	log.Printf("Average Transparency for Sensor Group: %v is %v", sensorGroup.Name, a.AverageTransparency)
+	log.Printf("--------------")
+}
+
+func getAverageTemperature(sensorGroup model.SensorGroup) {
+	a := makeRequest(fmt.Sprintf("http://localhost:3333/api/v1/group/%s/temperature/average", sensorGroup.Name))
+	if a == nil {
+		return
+	}
+	log.Printf("Average Temperature for Sensor Group: %v is %v", sensorGroup.Name, a.AverageTemperature)
+	log.Printf("--------------")
+}
+
+func makeRequest(url string) *model.SensorGroupAggregate {
+	var aggregateModel model.SensorGroupAggregate
 	resp, err := http.Get(url)
 	if err != nil {
 		fmt.Println("Error making GET request:", err)
-		return
+		return nil
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
+	body, err := io.ReadAll(resp.Body)
+	err = json.Unmarshal(body, &aggregateModel)
+	if err != nil {
+		fmt.Println("Error unmarshalling JSON:", err)
+		return nil
+	}
 
-		}
+	defer func(Body io.ReadCloser) {
+		_ = Body.Close()
 	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		fmt.Println("Received non-OK status code:", resp.StatusCode)
-		return
+		return nil
 	}
 
-	// Process response body or perform other actions
-	fmt.Println("GET request successful for URL:", url)
-	log.Printf("GET request successful for URL: %v", resp.Body)
+	return &aggregateModel
 }
