@@ -30,7 +30,7 @@ type SensorDataGenerator struct {
 }
 
 func NewSensorDataGenerator(db *gorm.DB) SensorDataGenerator {
-	r := repository.NewSensorRepositoryOne(db)
+	r := repository.NewSensorRepository(db)
 	s := repository.NewSensorDataRepository(db)
 	return SensorDataGenerator{
 		getAllSensors:    r.GetAllSensors,

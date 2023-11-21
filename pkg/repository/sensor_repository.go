@@ -5,23 +5,23 @@ import (
 	"sensor-api/pkg/model"
 )
 
-type SensorRepositoryOne struct {
+type SensorRepository struct {
 	db *gorm.DB
 }
 
-func NewSensorRepositoryOne(db *gorm.DB) SensorRepositoryOne {
-	return SensorRepositoryOne{
+func NewSensorRepository(db *gorm.DB) SensorRepository {
+	return SensorRepository{
 		db: db,
 	}
 }
 
-func (r SensorRepositoryOne) GetAllSensors() ([]model.Sensor, error) {
+func (r SensorRepository) GetAllSensors() ([]model.Sensor, error) {
 	var results []model.Sensor
 	tx := r.db.Find(&results)
 	return results, tx.Error
 }
 
-func (r SensorRepositoryOne) GetSensorByCodeName(codeName string) (model.Sensor, error) {
+func (r SensorRepository) GetSensorByCodeName(codeName string) (model.Sensor, error) {
 	var sensor model.Sensor
 	query := r.db.Where("name = ?", codeName).First(&sensor)
 	return sensor, query.Error

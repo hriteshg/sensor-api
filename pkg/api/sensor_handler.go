@@ -16,8 +16,8 @@ type SensorHandler struct {
 }
 
 func NewSensorHandler(db *gorm.DB) SensorHandler {
-	sensorRepository := repository.NewSensorRepository(db)
-	s := repository.NewSensorRepositoryOne(db)
+	sensorRepository := repository.NewSensorDataRepository(db)
+	s := repository.NewSensorRepository(db)
 	return SensorHandler{
 		getSensorByCodeName:            s.GetSensorByCodeName,
 		getAverageTemperatureForSensor: sensorRepository.GetAverageTemperatureForSensor,

@@ -15,7 +15,6 @@ import (
 )
 
 type SensorGroupHandler struct {
-	getGroup                   func() (model.SensorData, error)
 	getSensorAggregateForGroup func(groupName string) (model.SensorGroupAggregate, error)
 	getSpeciesCountsForGroup   func(groupName string, topN *int, fromDateTime *time.Time, toDateTime *time.Time) ([]model.SpeciesCount, error)
 	getFromCache               func(c *gin.Context, groupName string) (*model.SensorGroupAggregate, error)
@@ -23,10 +22,9 @@ type SensorGroupHandler struct {
 }
 
 func NewSensorGroupHandler(db *gorm.DB, cache cache.RedisCache) SensorGroupHandler {
-	sensorRepository := repository.NewSensorRepository(db)
+	sensorRepository := repository.NewSensorDataRepository(db)
 
 	return SensorGroupHandler{
-		getGroup:                   sensorRepository.GetGroup,
 		getSensorAggregateForGroup: sensorRepository.GetSensorAggregateForGroup,
 		getSpeciesCountsForGroup:   sensorRepository.GetSpeciesCountsForGroup,
 		getFromCache:               cache.GetFromCache,

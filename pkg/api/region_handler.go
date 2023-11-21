@@ -14,6 +14,14 @@ type RegionHandler struct {
 	getMaximumTemperatureForRegion func(xMin float64, xMax float64, yMin float64, yMax float64, zMin float64, zMax float64) (float64, error)
 }
 
+func NewRegionHandler(db *gorm.DB) RegionHandler {
+	sensorRepository := repository.NewSensorDataRepository(db)
+	return RegionHandler{
+		getMinimumTemperatureForRegion: sensorRepository.GetMinimumTemperatureForRegion,
+		getMaximumTemperatureForRegion: sensorRepository.GetMaximumTemperatureForRegion,
+	}
+}
+
 // QueryMinTemperature is a handler that calculates minimum temperature in a given region.
 // @Summary Calculate minimum temperature
 // @Description Calculate minimum temperature inside a region
@@ -122,12 +130,4 @@ func (h RegionHandler) QueryMaxTemperature(c *gin.Context) {
 		Value: r,
 		Scale: "Celsius",
 	})
-}
-
-func NewRegionHandler(db *gorm.DB) RegionHandler {
-	sensorRepository := repository.NewSensorRepository(db)
-	return RegionHandler{
-		getMinimumTemperatureForRegion: sensorRepository.GetMinimumTemperatureForRegion,
-		getMaximumTemperatureForRegion: sensorRepository.GetMaximumTemperatureForRegion,
-	}
 }
