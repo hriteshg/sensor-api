@@ -57,13 +57,13 @@ func makeRequest(url string) *model.SensorGroupAggregate {
 	var aggregateModel model.SensorGroupAggregate
 	resp, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error making GET request:", err)
+		log.Println("Error making GET request:", err)
 		return nil
 	}
 	body, err := io.ReadAll(resp.Body)
 	err = json.Unmarshal(body, &aggregateModel)
 	if err != nil {
-		fmt.Println("Error unmarshalling JSON:", err)
+		log.Println("Error unmarshalling JSON:", err)
 		return nil
 	}
 
@@ -72,7 +72,7 @@ func makeRequest(url string) *model.SensorGroupAggregate {
 	}(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Println("Received non-OK status code:", resp.StatusCode)
+		log.Println("Received non-OK status code:", resp.StatusCode)
 		return nil
 	}
 

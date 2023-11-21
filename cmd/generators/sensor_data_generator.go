@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"math/rand"
@@ -86,7 +85,7 @@ func (s SensorDataGenerator) processSensorData(sensorDataCh <-chan model.SensorD
 		if err != nil {
 			return
 		}
-		fmt.Printf("Writing sensor data to the database: %+v\n", data)
+		log.Printf("Writing sensor data to the database: %+v\n", data)
 	}
 }
 
