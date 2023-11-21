@@ -73,13 +73,13 @@ func (r SensorDataRepository) GetSpeciesCountsForGroup(groupName string, topN *i
 	return topSpeciesCounts, nil
 }
 
-func (r SensorDataRepository) GetMinimumTemperatureForRegion(xMin float64, xMax float64, yMin float64, yMax float64, zMin float64, zMax float64) (float64, error) {
+func (r SensorDataRepository) GetMinimumTemperatureForRegion(region model.Region) (float64, error) {
 	var minTemperature sql.NullFloat64
 
 	query := r.db.Model(&model.SensorData{}).
 		Joins("INNER JOIN sensors ON sensors.id = sensors_data.sensor_id").
 		Where("sensors.x_coordinate >= ? AND sensors.x_coordinate <= ? AND sensors.y_coordinate >= ? AND sensors.y_coordinate <= ? AND sensors.z_coordinate >= ? AND sensors.z_coordinate <= ?",
-			xMin, xMax, yMin, yMax, zMin, zMax).
+			region.XMin, region.XMax, region.YMin, region.YMax, region.ZMin, region.ZMax).
 		Select("MIN(sensors_data.temperature)").
 		Scan(&minTemperature)
 
@@ -93,13 +93,13 @@ func (r SensorDataRepository) GetMinimumTemperatureForRegion(xMin float64, xMax 
 	}
 }
 
-func (r SensorDataRepository) GetMaximumTemperatureForRegion(xMin float64, xMax float64, yMin float64, yMax float64, zMin float64, zMax float64) (float64, error) {
+func (r SensorDataRepository) GetMaximumTemperatureForRegion(region model.Region) (float64, error) {
 	var maxTemperature sql.NullFloat64
 
 	query := r.db.Model(&model.SensorData{}).
 		Joins("INNER JOIN sensors ON sensors.id = sensors_data.sensor_id").
 		Where("sensors.x_coordinate >= ? AND sensors.x_coordinate <= ? AND sensors.y_coordinate >= ? AND sensors.y_coordinate <= ? AND sensors.z_coordinate >= ? AND sensors.z_coordinate <= ?",
-			xMin, xMax, yMin, yMax, zMin, zMax).
+			region.XMin, region.XMax, region.YMin, region.YMax, region.ZMin, region.ZMax).
 		Select("MAX(sensors_data.temperature)").
 		Scan(&maxTemperature)
 

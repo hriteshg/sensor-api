@@ -1,6 +1,9 @@
 package model
 
 import (
+	"errors"
+	"github.com/gin-gonic/gin"
+	"sensor-api/pkg/helpers"
 	"time"
 )
 
@@ -67,4 +70,48 @@ type SpeciesCount struct {
 type TemperatureResponse struct {
 	Value float64 `json:"value"`
 	Scale string  `json:"scale"`
+}
+
+type Region struct {
+	XMin float64
+	XMax float64
+	YMin float64
+	YMax float64
+	ZMin float64
+	ZMax float64
+}
+
+func BuildRegion(c *gin.Context) (*Region, error) {
+	xMin, err := helpers.GetFloatQueryParam(c, "xMin")
+	if err != nil {
+		return nil, errors.New("invalid xMin")
+	}
+	xMax, err := helpers.GetFloatQueryParam(c, "xMax")
+	if err != nil {
+		return nil, errors.New("invalid xMax")
+	}
+	yMin, err := helpers.GetFloatQueryParam(c, "yMin")
+	if err != nil {
+		return nil, errors.New("invalid yMin")
+	}
+	yMax, err := helpers.GetFloatQueryParam(c, "yMax")
+	if err != nil {
+		return nil, errors.New("invalid yMax")
+	}
+	zMin, err := helpers.GetFloatQueryParam(c, "zMin")
+	if err != nil {
+		return nil, errors.New("invalid zMin")
+	}
+	zMax, err := helpers.GetFloatQueryParam(c, "zMax")
+	if err != nil {
+		return nil, errors.New("invalid zMax")
+	}
+	return &Region{
+		XMin: xMin,
+		XMax: xMax,
+		YMin: yMin,
+		YMax: yMax,
+		ZMin: zMin,
+		ZMax: zMax,
+	}, nil
 }

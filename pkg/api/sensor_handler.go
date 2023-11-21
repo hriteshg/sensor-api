@@ -1,12 +1,14 @@
 package api
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"net/http"
 	"sensor-api/pkg/helpers"
 	"sensor-api/pkg/model"
 	"sensor-api/pkg/repository"
+	"strings"
 	"time"
 )
 
@@ -35,9 +37,9 @@ func NewSensorHandler(db *gorm.DB) SensorHandler {
 // @Param codeName path string  true "Code name of the sensor"
 // @Router /sensor/:codeName/temperature/average [get]
 func (h SensorHandler) QueryAverageTemperature(c *gin.Context) {
-	codeName := c.Param("codeName")
-	if len(codeName) == 0 {
-		c.IndentedJSON(http.StatusBadRequest, "Invalid group name")
+	codeName, err := h.getCodeName(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -69,4 +71,16 @@ func (h SensorHandler) QueryAverageTemperature(c *gin.Context) {
 		Value: r,
 		Scale: "Celsius",
 	})
+}
+
+func (h SensorHandler) getCodeName(c *gin.Context) (string, error) {
+	codeName := c.Param("codeName")
+	if len(codeName) == 0 {
+		return "", errors.New("invalid code name")
+	}
+	parts := strings.Split(codeName, " ")
+	if len(parts) != 2 {
+		return "", errors.New("invalid code name")
+	}
+	return codeName, nil
 }
