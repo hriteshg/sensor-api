@@ -78,18 +78,14 @@ func (s SensorDataGenerator) processSensorData(sensorDataCh <-chan model.SensorD
 }
 
 func generateTemperature(depthCoefficient float64, source rand.Source) float64 {
-	// Randomize temperature based on depth (Z-axis)
-	// Adjust the depth coefficient to simulate different depths
 	r := rand.New(source)
 	return r.Float64() * depthCoefficient * 100 // Adjust the range (0-100) as needed
 }
 
 func generateTransparency(previousTransparency int64, source rand.Source) int64 {
-	// Randomize transparency ensuring it doesn't differ too much from the previous value
-	maxDiff := int64(10) // Maximum difference allowed from previous value
+	maxDiff := int64(10)
 	r := rand.New(source)
 
-	// Convert previousTransparency to be within the range (1 to 100)
 	if previousTransparency < 1 {
 		previousTransparency = 1
 	} else if previousTransparency > 100 {
