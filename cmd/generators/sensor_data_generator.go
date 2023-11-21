@@ -50,7 +50,20 @@ func (s SensorDataGenerator) Start() {
 	select {}
 }
 
-var predefinedFishes = []string{"Species A", "Species B", "Species C"}
+var predefinedFishes = []string{
+	"AtlanticBluefinTuna", "AtlanticCod", "AtlanticGoliathGrouper", "AtlanticSalmon", "AtlanticTrumpetfish",
+	"AtlanticWolffish", "BandedButterflyfish", "BelugaSturgeon", "BlueMarlin", "BlueTang", "BluebandedGoby",
+	"BlueheadWrasse", "CaliforniaGrunion", "ChileanCommonHake", "ChileanJackMackerel", "ChinookSalmon",
+	"ClownTriggerfish", "Coelacanth", "CommonClownfish", "CommonDolphinfish", "CommonFangtooth", "DeepSeaAnglerfish",
+	"FlashlightFish", "FrenchAngelfish", "GreatBarracuda", "GreenMorayEel", "GuineafowlPuffer", "JohnDory",
+	"LeafySeadragon", "LongsnoutSeahorse", "MexicanLookdown", "NassauGrouper", "NorthernRedSnapper", "Oarfish",
+	"OceanSunfish", "OrangeRoughy", "PacificBlackdragon", "PacificHalibut", "PacificHerring", "PacificSardine",
+	"PatagonianToothfish", "PeruvianAnchoveta", "PinkSalmon", "PygmySeahorse", "QueenAngelfish", "QueenParrotfish",
+	"RedLionfish", "Sailfish", "SarcasticFringehead", "ScarletFrogfish", "Scorpionfish", "SkipjackTuna",
+	"SlenderSnipeEel", "SmalltoothSawfish", "SockeyeSalmon", "SpottedMoray", "SpottedPorcupinefish", "SpottedRatfish",
+	"Stonefish", "StoplightLoosejaw", "SummerFlounder", "Swordfish", "TanBristlemouth", "ThreespotDamselfish",
+	"TropicalTwoWingFlyingfish", "Wahoo", "WhiptailGulper", "WhiteRingGardenEel", "YellowfinTuna",
+}
 var sensorDataCh = make(chan model.SensorData)
 
 func (s SensorDataGenerator) runScheduler(sensor model.Sensor) {
